@@ -1,0 +1,34 @@
+digraph G {
+  graph[
+      charset = "UTF-8"
+      rankdir = LR
+  ]
+
+  node_1 [label="{ 開発環境整備|{ all |{ 1 日} | xxx } }",
+     shape="record",
+    ];
+  node_2 [label="{ 設計|{ you |{ 3 日} |  } }",
+     shape="record",
+    ];
+  node_3 [label="{ インフラ手配|{ you |{ 4 日} |  } }",
+     shape="record",
+    ];
+  node_4 [label="{ 実装|{ me |{ 5 日} |  } }",
+     shape="record",
+    ];
+  node_5 [label="{ 単体テスト|{ me |{ 6 日} | you can write comments here } }",
+     shape="record",
+    ];
+  node_6 [label="{ 結合テスト|{ me |{ 7 日} |  } }",
+     shape="record",
+    ];
+  node_7 [label="{ 本番デプロイ|{ me |{ 8 日} |  } }",
+     shape="record",
+    ];
+  node_8 [label="{ 受入テスト|{ customer |{ 9 日} |  } }",
+     shape="record",
+    ];
+  node_2 -> node_4;
+  node_1 -> node_4 -> node_5 -> node_6 -> node_7;
+  node_3 -> node_7 -> node_8;
+}

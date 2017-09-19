@@ -1,0 +1,15 @@
+digraph G {
+  graph[
+      charset = "UTF-8"
+      rankdir = LR
+  ]
+
+{{#nodes}}
+  {{node-name}} [label="{ {{task-name}}|{ {{assignee}} |{ {{day}} 日} | {{note}} } }",
+     shape="record",
+    ];
+{{/nodes}}
+{{#paths}}
+  {{&path}};
+{{/paths}}
+}
