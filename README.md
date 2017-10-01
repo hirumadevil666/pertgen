@@ -67,4 +67,4 @@ repl で入力しつつ out.dot を VSCode のGraphviz plugin のプレビュー
 (draw-graph)
 ```
 
-![グラフ](https://github.com/hirumadevil666/pertgen/raw/master/doc/examples/script_example.png)
+![グラフ](https://github.com/hirumadevil666/pertgen/raw/images/doc/examples/script_example.png)
