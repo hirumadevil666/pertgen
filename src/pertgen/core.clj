@@ -94,21 +94,18 @@
 
 (defn draw-graph []
   (do (clear-edge)
-      (try
-        (let [p(->> (map check-task @paths)
-                    (map remove-dup-edge )
-                    (map split-path)
-                    (map #(mapcat conj %))
-                    (filter #(not (empty? %))) ;remove empty list
-                    )]
-          ;;
-          (if (nil? @output-file)
-            (write-graph *out* p)
-            (with-open [w (clojure.java.io/writer @output-file)]
-              (write-graph w p))))
-        (catch Exception e
-          (cond (= :task-check (-> e ex-data :cause)) (do (println (.getMessage e)) nil)
-                :else (throw e))))))
+      (let [p(->> ;; (map check-task @paths) ;
+              @paths
+              (map remove-dup-edge )
+              (map split-path)
+              (map #(mapcat conj %))
+              (filter #(not (empty? %))) ;remove empty list
+              )]
+        ;;
+        (if (nil? @output-file)
+          (write-graph *out* p)
+          (with-open [w (clojure.java.io/writer @output-file)]
+            (write-graph w p))))))
 
 (defn call-draw-graph []
   (if (true? @interactive-mode)
@@ -174,7 +171,9 @@
 
 (defmacro symli2key
   [li]
-  `(map keyword '~li))
+  `(if (sequential? '~li)
+     (map keyword '~li)
+     (throw (ex-info "Path must be vector or list" {:cause :task-check}))))
 ;;
 ;; (make-path-keyword
 ;;  (a b c ) (d e f) (g h i j))
@@ -186,23 +185,25 @@
    `(apply conj [(symli2key ~x)] (make-path-keyword ~@rest))))
 
 (defmacro graph
-  ([& rest]
-   `(regist-graph-by-list  (make-path-keyword ~@rest))))
+  [& rest]
+  `(try
+     (regist-graph  (make-path-keyword ~@rest))
+     (catch Exception e#
+       (cond (= :task-check (-> e# ex-data :cause)) (do (println (.getMessage e#)) nil)
+             :else (throw e#)))))
 
-(defn regist-graph-by-list [new-paths]
+(defn regist-graph [new-paths]
   ;; regist whole path
-  (do
-    (reset! paths new-paths)
-    (call-draw-graph)))
+  (doall (map check-task new-paths))
+  (reset! paths new-paths)
+  (call-draw-graph)
+  @paths)
 
 (defn- add-path [p]
   ;; add single path
   (do
     (swap! paths conj  p)
     (call-draw-graph)))
-
-(defn regist-graph [x & rest]
-  (regist-graph-by-list  (apply conj [x] rest)))
 
 (defn get-templatefile []
   @template-file)
